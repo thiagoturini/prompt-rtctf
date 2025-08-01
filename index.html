@@ -1,5 +1,107 @@
-<!-- Criar a estrutura básica HTML de uma página com:
-- campo de texto
-- botão para gerar prompt RTCTF
-- área para exibir os 5 blocos (Role, Task, Context, Tone, Format)
-- botão para copiar resultado -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTCTF - Estruturador de Prompts</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>RTCTF Prompt Estruturador</h1>
+            <p class="subtitle">Transforme seu texto em um prompt estruturado com Role, Task, Context, Tone e Format</p>
+        </header>
+
+        <main class="main-content">
+            <!-- Status da IA -->
+            <section class="ai-status-section">
+                <div class="ai-status-card">
+                    <div class="status-indicator">
+                        <span class="status-icon">🚀</span>
+                        <div class="status-text">
+                            <h3>IA Multi-Modelo Avançada</h3>
+                            <p>Sistema com OpenAI GPT-3.5, Claude, Groq Mixtral e Gemini para máxima precisão</p>
+                        </div>
+                        <span class="status-badge connected">Premium Ready</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Área de instruções -->
+            <section class="instructions">
+                <h2>Como usar:</h2>
+                <ol>
+                    <li>Digite ou cole seu texto no campo abaixo</li>
+                    <li>Clique em "Gerar Prompt RTCTF com IA"</li>
+                    <li>Revise e ajuste o resultado se necessário</li>
+                    <li>Copie o prompt estruturado</li>
+                </ol>
+            </section>
+
+            <!-- Área de entrada -->
+            <section class="input-section">
+                <label for="inputText">Seu texto para estruturar:</label>
+                <textarea 
+                    id="inputText" 
+                    placeholder="Cole aqui o texto que você gostaria de transformar em um prompt estruturado RTCTF..."
+                    rows="6"
+                ></textarea>
+                <button id="generateBtn" class="btn-primary">� Gerar Prompt RTCTF Inteligente</button>
+            </section>
+
+            <!-- Área de resultado -->
+            <section class="result-section" id="resultSection" style="display: none;">
+                <h2>Prompt Estruturado:</h2>
+                
+                <div class="rtctf-blocks">
+                    <div class="block role-block">
+                        <h3>📋 Role (Papel)</h3>
+                        <div id="roleContent" class="block-content" contenteditable="true"></div>
+                    </div>
+                    
+                    <div class="block task-block">
+                        <h3>🎯 Task (Tarefa)</h3>
+                        <div id="taskContent" class="block-content" contenteditable="true"></div>
+                    </div>
+                    
+                    <div class="block context-block">
+                        <h3>🌍 Context (Contexto)</h3>
+                        <div id="contextContent" class="block-content" contenteditable="true"></div>
+                    </div>
+                    
+                    <div class="block tone-block">
+                        <h3>🎨 Tone (Tom)</h3>
+                        <div id="toneContent" class="block-content" contenteditable="true"></div>
+                    </div>
+                    
+                    <div class="block format-block">
+                        <h3>📄 Format (Formato)</h3>
+                        <div id="formatContent" class="block-content" contenteditable="true"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="copyBtn" class="btn-secondary">📋 Copiar Prompt Completo</button>
+                    <button id="resetBtn" class="btn-secondary">🔄 Novo Prompt</button>
+                </div>
+
+                <!-- Área do prompt final -->
+                <div class="final-prompt">
+                    <h3>Prompt Final:</h3>
+                    <div id="finalPrompt" class="final-prompt-content"></div>
+                </div>
+            </section>
+
+            <!-- Mensagens de feedback -->
+            <div id="feedback" class="feedback"></div>
+        </main>
+
+        <footer class="footer">
+            <p>© 2025 RTCTF Prompt Estruturador | Criado para melhorar a qualidade dos seus prompts</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
