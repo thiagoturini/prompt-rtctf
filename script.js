@@ -306,33 +306,40 @@ class RTCTFProcessor {
     }
 
     async tryOpenAI(text) {
-        const prompt = `Você é um especialista em engenharia de prompts. Transforme o texto do usuário em um prompt estruturado RTCTF (Role, Task, Context, Tone, Format).
+        const prompt = `Você é um especialista em engenharia de prompts e metodologia RTCTF. Transforme o texto do usuário em um prompt estruturado seguindo a metodologia Role, Task, Context, Tone, Format.
 
-TEXTO: "${text}"
+METODOLOGIA RTCTF:
+🎭 ROLE: O "chapéu profissional" que a IA deve assumir - um especialista específico na área
+📋 TASK: A ação exata que você quer que seja executada - clara e específica  
+🌍 CONTEXT: O cenário, situação ou restrições - o "porquê" e "para quem"
+🎯 TONE: O estilo da comunicação - formal, informal, técnico, didático, etc.
+🧱 FORMAT: A estrutura da resposta - lista, tabela, parágrafos, e-mail, etc.
 
-EXEMPLO DE TRANSFORMAÇÃO CORRETA:
+TEXTO DO USUÁRIO: "${text}"
+
+EXEMPLO DE TRANSFORMAÇÃO:
 Entrada: "Quero entender a diferença entre romance e comédia"
 
-ROLE: Atue como um crítico literário e cinematográfico especializado em análise de gêneros narrativos
-TASK: Explique de forma detalhada e comparativa as principais diferenças entre os gêneros romance e comédia
-CONTEXT: Análise comparativa de gêneros narrativos, considerando características, estruturas, objetivos e elementos distintivos de cada gênero
-TONE: Use um tom didático, claro e acessível, adequado para ensino e aprendizado
-FORMAT: Organize como uma comparação estruturada com características de cada gênero, diferenças principais e exemplos práticos
+ROLE: Você é um crítico literário e cinematográfico com 15 anos de experiência em análise de gêneros narrativos
+TASK: Compare e explique detalhadamente as principais diferenças entre os gêneros romance e comédia
+CONTEXT: Esta análise será usada por estudantes de literatura que estão aprendendo sobre classificação de gêneros narrativos e precisam compreender as características distintivas
+TONE: Didático e acessível, como um professor explicando para alunos, mas mantendo profundidade analítica
+FORMAT: Organize em seções claras: características do romance, características da comédia, principais diferenças, e exemplos práticos de cada gênero
 
-REGRAS:
-1. ROLE deve ser um especialista ESPECÍFICO na área do texto
-2. TASK deve reformular o pedido de forma clara e profissional  
-3. CONTEXT deve explicar o cenário e adicionar contexto relevante
-4. TONE deve ser apropriado para o tipo de comunicação
-5. FORMAT deve especificar a melhor estrutura de resposta
+INSTRUÇÕES:
+- ROLE: Defina um especialista específico e qualificado na área
+- TASK: Reformule o pedido de forma clara, específica e acionável
+- CONTEXT: Explique o cenário, público-alvo ou situação de uso
+- TONE: Escolha o estilo mais apropriado para o objetivo
+- FORMAT: Especifique como estruturar a resposta para máxima utilidade
 
 Responda APENAS em JSON:
 {
-  "role": "Atue como um [especialista específico]...",
-  "task": "[reformulação profissional da solicitação]",
-  "context": "[contexto detalhado e objetivos]",
-  "tone": "[tom apropriado]",
-  "format": "[estrutura ideal de resposta]"
+  "role": "Você é um [especialista específico com experiência]...",
+  "task": "[ação clara e específica que deve ser executada]",
+  "context": "[cenário, público-alvo e situação de uso]",
+  "tone": "[estilo de comunicação apropriado]",
+  "format": "[estrutura específica da resposta]"
 }`;
 
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -359,31 +366,40 @@ Responda APENAS em JSON:
     }
 
     async tryAnthropic(text) {
-        const prompt = `Transforme este texto em um prompt estruturado RTCTF profissional:
+        const prompt = `Você é um expert em metodologia RTCTF para criar prompts estruturados.
 
-TEXTO: "${text}"
+METODOLOGIA RTCTF:
+🎭 ROLE: Defina o "chapéu profissional" - que especialista a IA deve ser
+📋 TASK: Especifique a ação exata - o que fazer de forma clara
+🌍 CONTEXT: Forneça o cenário - para quem, por que, qual situação
+🎯 TONE: Determine o estilo - formal, informal, técnico, didático, etc.
+🧱 FORMAT: Estruture a apresentação - lista, tabela, markdown, e-mail, etc.
 
-Para cada campo RTCTF, pense:
-- ROLE: Que especialista seria perfeito para esta questão?
-- TASK: Como reformular isso profissionalmente?
-- CONTEXT: Que contexto adicional seria útil?
-- TONE: Que tom seria mais eficaz?
-- FORMAT: Qual a melhor estrutura de resposta?
+TEXTO PARA TRANSFORMAR: "${text}"
 
-Exemplo: "Quero entender X e Y" → 
-ROLE: especialista em X e Y
-TASK: explicar diferenças entre X e Y
-CONTEXT: análise comparativa considerando...
-TONE: didático e claro
-FORMAT: comparação estruturada
+EXEMPLO PRÁTICO:
+"Quero aprender sobre investimentos" →
+
+ROLE: Você é um consultor financeiro certificado com 10 anos de experiência em educação financeira
+TASK: Ensine os conceitos fundamentais de investimentos para iniciantes
+CONTEXT: Esta informação será usada por uma pessoa que nunca investiu e quer começar com segurança, sem conhecimento técnico prévio
+TONE: Didático e encorajador, como um mentor paciente, evitando jargões técnicos
+FORMAT: Organize em: conceitos básicos, tipos de investimento, primeiros passos práticos, e dicas de segurança
+
+INSTRUÇÕES:
+- ROLE: Seja específico sobre a expertise e experiência
+- TASK: Transforme o pedido em ação clara e mensurável  
+- CONTEXT: Explique o público-alvo e situação de uso
+- TONE: Escolha o estilo que melhor serve ao objetivo
+- FORMAT: Detalhe como estruturar para máxima clareza
 
 JSON de resposta:
 {
-  "role": "Atue como...",
-  "task": "...",
-  "context": "...",
-  "tone": "...",
-  "format": "..."
+  "role": "Você é um [especialista específico com qualificações]...",
+  "task": "[ação específica e clara]",
+  "context": "[público-alvo e cenário de uso]",
+  "tone": "[estilo de comunicação apropriado]",
+  "format": "[estrutura detalhada da resposta]"
 }`;
 
         const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -411,25 +427,32 @@ JSON de resposta:
     }
 
     async tryGemini(text) {
-        const prompt = `TRANSFORME EM PROMPT RTCTF PROFISSIONAL:
+        const prompt = `Você é um especialista em metodologia RTCTF. Transforme o texto em prompt estruturado seguindo esta metodologia:
+
+🎭 ROLE = "Chapéu profissional" que a IA deve assumir
+📋 TASK = Ação específica que deve ser executada  
+🌍 CONTEXT = Cenário, público-alvo, situação de uso
+🎯 TONE = Estilo de comunicação apropriado
+🧱 FORMAT = Estrutura específica da resposta
 
 ENTRADA: "${text}"
 
-MODELO CORRETO:
-"Quero entender diferença entre A e B" →
-ROLE: especialista em A e B  
-TASK: explicar diferenças detalhadas entre A e B
-CONTEXT: análise comparativa de A e B
-TONE: didático e claro
-FORMAT: comparação estruturada
+REFERÊNCIA:
+"Preciso de ajuda com marketing digital" →
+
+ROLE: Você é um especialista em marketing digital com 8 anos de experiência em pequenas e médias empresas
+TASK: Desenvolva uma estratégia completa de marketing digital personalizada
+CONTEXT: Para um empreendedor que está iniciando seu negócio online e tem orçamento limitado, precisando de resultados práticos e mensuráveis
+TONE: Consultivo e prático, como um mentor experiente, focando em ações simples e eficazes
+FORMAT: Plano estruturado com: diagnóstico atual, estratégias recomendadas, cronograma de implementação, e métricas de acompanhamento
 
 RESPONDA SÓ JSON:
 {
-  "role": "Atue como um especialista em [área específica]",
-  "task": "[reformulação clara da solicitação]", 
-  "context": "[contexto específico e útil]",
-  "tone": "[tom apropriado]",
-  "format": "[estrutura de resposta ideal]"
+  "role": "Você é um [especialista específico com experiência detalhada]",
+  "task": "[ação clara e específica a ser executada]", 
+  "context": "[público-alvo e cenário específico de uso]",
+  "tone": "[estilo de comunicação mais apropriado]",
+  "format": "[estrutura detalhada de como apresentar a resposta]"
 }`;
 
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${this.geminiKey}`, {
@@ -503,18 +526,27 @@ Return only JSON:
             const value = result[field];
             return value && 
                    typeof value === 'string' && 
-                   value.length > 20 && // Mínimo de 20 caracteres para evitar respostas genéricas
+                   value.length > 30 && // Mínimo de 30 caracteres para respostas mais detalhadas
                    !value.includes('[') && // Evitar placeholders como [área específica]
                    !value.includes('...'); // Evitar respostas incompletas
         });
 
+        // Verificar se segue a metodologia RTCTF corretamente
+        const followsMethodology = (
+            result.role.toLowerCase().includes('você é') && // Role deve definir "quem" a IA é
+            result.task.toLowerCase().match(/(analise|compare|explique|desenvolva|forneça|crie|elabore)/i) && // Task deve ter verbo de ação
+            result.context.toLowerCase().includes('será') && // Context deve explicar uso/público
+            result.tone.toLowerCase().includes('como') && // Tone deve comparar a um estilo conhecido
+            result.format.toLowerCase().match(/(organize|estruture|formate|apresente)/i) // Format deve especificar estrutura
+        );
+
         // Verificar se é específico (não genérico)
-        const genericTerms = ['especialista geral', 'profissional qualificado', 'pessoa experiente'];
+        const genericTerms = ['especialista geral', 'profissional qualificado', 'pessoa experiente', 'análise geral'];
         const isSpecific = !genericTerms.some(term => 
             result.role.toLowerCase().includes(term.toLowerCase())
         );
 
-        return isValid && isSpecific;
+        return isValid && followsMethodology && isSpecific;
     }
 
     superSmartLocalAnalysis(text) {
@@ -586,68 +618,111 @@ Return only JSON:
     }
 
     generateExpertRole(analysis) {
-        const roles = {
-            technology: 'Atue como um engenheiro de software sênior e arquiteto de sistemas',
-            business: 'Atue como um consultor empresarial especializado em estratégia e gestão',
-            education: 'Atue como um educador especializado e designer instrucional',
-            health: 'Atue como um profissional de saúde especializado em medicina clínica',
-            cooking: 'Atue como um chef profissional especializado em gastronomia',
-            entertainment: 'Atue como um crítico cultural e especialista em análise de gêneros narrativos',
-            comparison: 'Atue como um analista especializado em estudos comparativos e avaliação crítica',
-            general: 'Atue como um especialista multidisciplinar com amplo conhecimento'
+        const roleTemplates = {
+            technology: 'Você é um engenheiro de software sênior com 10+ anos de experiência em desenvolvimento de sistemas e arquitetura',
+            business: 'Você é um consultor empresarial estratégico com MBA e 15 anos de experiência em transformação de negócios',
+            education: 'Você é um educador especializado com doutorado em pedagogia e 12 anos de experiência em design instrucional',
+            health: 'Você é um profissional de saúde com especialização clínica e 8 anos de experiência em medicina baseada em evidências',
+            cooking: 'Você é um chef profissional graduado em gastronomia com 10 anos de experiência em alta culinária',
+            entertainment: 'Você é um crítico cultural e analista de mídia com mestrado em comunicação e 12 anos analisando gêneros narrativos',
+            comparison: 'Você é um analista especializado em estudos comparativos com expertise em metodologias de avaliação crítica',
+            finance: 'Você é um consultor financeiro certificado com 10 anos de experiência em educação financeira e planejamento',
+            general: 'Você é um especialista multidisciplinar com ampla experiência acadêmica e prática na área específica'
         };
         
-        return roles[analysis.area] || roles.general;
+        return roleTemplates[analysis.area] || roleTemplates.general;
     }
 
     generateProfessionalTask(text, analysis) {
-        const baseTask = text.charAt(0).toUpperCase() + text.slice(1);
+        // Transformar o texto em uma tarefa específica e acionável
+        const lowerText = text.toLowerCase();
         
-        if (analysis.area === 'comparison') {
-            return `Analise e compare detalhadamente: ${baseTask}`;
-        } else if (analysis.isQuestion) {
-            return `Forneça uma análise completa e fundamentada para: ${baseTask}`;
+        if (lowerText.includes('diferença') || lowerText.includes('comparar') || lowerText.includes('vs')) {
+            return `Compare detalhadamente e explique as principais diferenças entre ${this.extractComparisonElements(text)}`;
+        } else if (lowerText.includes('como') && (lowerText.includes('fazer') || lowerText.includes('criar'))) {
+            return `Forneça um guia passo a passo detalhado sobre ${text.replace(/como /i, '')}`;
+        } else if (lowerText.includes('melhor') || lowerText.includes('recomend')) {
+            return `Analise e recomende as melhores opções para ${text}`;
+        } else if (lowerText.includes('explicar') || lowerText.includes('entender')) {
+            return `Explique de forma clara e completa ${text.replace(/quero|preciso|gostaria de|explicar|entender/gi, '').trim()}`;
+        } else if (lowerText.includes('ajuda') || lowerText.includes('apoio')) {
+            return `Desenvolva um plano de apoio e orientação para ${text.replace(/ajuda|apoio|preciso de/gi, '').trim()}`;
         } else {
-            return `Desenvolva e implemente: ${baseTask}`;
+            // Fallback: transformar em tarefa acionável
+            return `Desenvolva uma solução completa e prática para: ${text}`;
         }
     }
 
+    extractComparisonElements(text) {
+        // Extrair elementos que estão sendo comparados
+        const patterns = [
+            /entre (.+?) e (.+?)$/i,
+            /(.+?) vs (.+?)$/i,
+            /(.+?) ou (.+?)$/i,
+            /diferença.*?entre (.+?) e (.+)/i
+        ];
+        
+        for (const pattern of patterns) {
+            const match = text.match(pattern);
+            if (match) {
+                return `${match[1].trim()} e ${match[2].trim()}`;
+            }
+        }
+        
+        return text.replace(/diferença|entre|comparar/gi, '').trim();
+    }
+
     generateRelevantContext(analysis) {
-        const contexts = {
-            technology: 'Desenvolvimento de soluções tecnológicas modernas e eficientes',
-            business: 'Otimização de processos empresariais e crescimento sustentável',
-            education: 'Facilitação de aprendizado eficaz e desenvolvimento de competências',
-            health: 'Promoção de saúde e bem-estar baseada em evidências científicas',
-            cooking: 'Preparação culinária profissional com técnicas gastronômicas',
-            entertainment: 'Análise crítica e comparativa de gêneros narrativos, considerando características, estruturas, objetivos e elementos distintivos',
-            comparison: 'Análise objetiva e comparativa de opções e alternativas com critérios específicos',
-            general: 'Análise abrangente considerando múltiplas perspectivas e fatores'
+        const contextTemplates = {
+            technology: 'Esta solução será implementada em ambiente profissional, considerando boas práticas de desenvolvimento, escalabilidade e manutenibilidade',
+            business: 'Esta análise será usada para tomada de decisões estratégicas em ambiente empresarial, focando em resultados práticos e ROI',
+            education: 'Este conteúdo será utilizado por estudantes ou profissionais que buscam aprender o tópico de forma estruturada e aplicável',
+            health: 'Esta informação destina-se a pessoas que buscam orientação baseada em evidências científicas para cuidados com a saúde',
+            cooking: 'Esta receita/técnica será usada por pessoas que querem aprender culinária de qualidade, do iniciante ao intermediário',
+            entertainment: 'Esta análise será utilizada por estudantes de literatura/cinema ou pessoas interessadas em compreender gêneros narrativos de forma didática',
+            comparison: 'Esta comparação será usada para tomada de decisão informada, considerando múltiplos critérios e necessidades específicas do usuário',
+            finance: 'Esta orientação destina-se a pessoas que querem tomar decisões financeiras mais inteligentes e seguras',
+            general: 'Esta informação será usada por alguém que busca conhecimento prático e aplicável em seu contexto específico'
         };
         
-        return contexts[analysis.area] || contexts.general;
+        return contextTemplates[analysis.area] || contextTemplates.general;
     }
 
     generateAppropriateTone(analysis) {
-        if (analysis.isFormal) return 'Formal, respeitoso e profissional';
-        if (analysis.isUrgent) return 'Direto, conciso e orientado a ação';
-        if (analysis.complexity > 2) return 'Didático, detalhado e estruturado';
-        if (analysis.area === 'entertainment') return 'Didático, claro e acessível, adequado para análise cultural';
-        return 'Claro, acessível e envolvente';
+        // Tom baseado no contexto e complexidade
+        if (analysis.isFormal) {
+            return 'Formal e profissional, como em um relatório executivo, mantendo autoridade e credibilidade';
+        } else if (analysis.isUrgent) {
+            return 'Direto e objetivo, focado em ação imediata, como um consultor em situação crítica';
+        } else if (analysis.complexity > 2) {
+            return 'Didático e estruturado, como um professor experiente explicando conceitos complexos de forma acessível';
+        } else if (analysis.area === 'education') {
+            return 'Educativo e encorajador, como um mentor paciente que quer facilitar o aprendizado';
+        } else if (analysis.area === 'health') {
+            return 'Informativo e responsável, como um profissional de saúde confiável e cuidadoso';
+        } else if (analysis.area === 'entertainment') {
+            return 'Analítico mas acessível, como um crítico cultural que torna complexo em simples';
+        } else if (analysis.area === 'business') {
+            return 'Consultivo e estratégico, como um advisor experiente focado em resultados';
+        } else {
+            return 'Claro e envolvente, como um especialista amigável que quer realmente ajudar';
+        }
     }
 
     generateIdealFormat(analysis) {
-        const formats = {
-            technology: 'Guia técnico estruturado com exemplos práticos e código',
-            business: 'Relatório executivo com análise e recomendações estratégicas',
-            education: 'Material didático organizado com conceitos e exercícios',
-            health: 'Informações médicas estruturadas com evidências científicas',
-            cooking: 'Receita detalhada com ingredientes, preparo e dicas profissionais',
-            entertainment: 'Comparação estruturada com características de cada gênero, diferenças principais e exemplos práticos',
-            comparison: 'Tabela comparativa com prós, contras, critérios específicos e recomendações finais',
-            general: 'Resposta estruturada com tópicos organizados e conclusões'
+        const formatTemplates = {
+            technology: 'Organize como um guia técnico estruturado: introdução ao problema, solução detalhada com exemplos de código, melhores práticas, e próximos passos',
+            business: 'Estruture como um relatório executivo: resumo executivo, análise situacional, recomendações estratégicas com justificativas, e plano de implementação',
+            education: 'Formate como material didático: conceitos fundamentais, explicações passo a passo, exemplos práticos, exercícios de fixação, e recursos adicionais',
+            health: 'Apresente como orientação médica estruturada: contexto do problema, evidências científicas, recomendações práticas, e quando buscar ajuda profissional',
+            cooking: 'Organize como receita profissional: lista de ingredientes com quantidades, passo a passo detalhado, dicas técnicas, variações possíveis, e apresentação',
+            entertainment: 'Estruture como análise crítica: características distintivas de cada elemento, comparação direta, exemplos representativos, e conclusões práticas',
+            comparison: 'Formate como tabela comparativa: critérios de avaliação, prós e contras de cada opção, classificação por importância, e recomendação final fundamentada',
+            finance: 'Organize como plano financeiro: situação atual, objetivos claros, estratégias recomendadas, cronograma de implementação, e métricas de acompanhamento',
+            general: 'Estruture de forma lógica e prática: introdução clara, desenvolvimento organizado em tópicos, exemplos concretos, e conclusões acionáveis'
         };
         
-        return formats[analysis.area] || formats.general;
+        return formatTemplates[analysis.area] || formatTemplates.general;
     }
 
     buildRTCTFFromAnalysis(text, analysis) {
