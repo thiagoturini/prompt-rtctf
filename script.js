@@ -96,20 +96,41 @@ class RTCTFProcessor {
 
     updateApiStatus() {
         const statusElement = document.querySelector('.ai-status-indicator');
-        if (statusElement) {
-            statusElement.textContent = '🚀 OpenAI GPT-3.5 + Claude + Groq Mixtral + Gemini Pro - TODOS ATIVOS!';
-            statusElement.style.color = '#4CAF50';
-            statusElement.style.fontWeight = 'bold';
-        }
-        
-        // Atualizar badge de status
         const statusBadge = document.querySelector('.status-badge');
-        if (statusBadge) {
-            statusBadge.textContent = 'Premium Active';
-            statusBadge.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+        
+        // Contar APIs válidas configuradas
+        const validApis = [
+            this.openaiKey && !this.openaiKey.includes('DEMO') ? 'OpenAI' : null,
+            this.anthropicKey && !this.anthropicKey.includes('DEMO') ? 'Claude' : null,
+            this.groqKey && !this.groqKey.includes('DEMO') ? 'Groq' : null,
+            this.geminiKey && !this.geminiKey.includes('DEMO') ? 'Gemini' : null
+        ].filter(Boolean);
+        
+        if (statusElement) {
+            if (validApis.length === 0) {
+                statusElement.innerHTML = `
+                    <span style="color: #ff6b35;">⚠️ APIs não configuradas</span>
+                    <br><small style="color: #666;">Clique em "⚙️ Config APIs" para configurar</small>
+                `;
+            } else {
+                statusElement.innerHTML = `
+                    <span style="color: #4CAF50;">🚀 ${validApis.join(' + ')} ATIVO${validApis.length > 1 ? 'S' : ''}!</span>
+                    <br><small style="color: #666;">${validApis.length} modelo${validApis.length > 1 ? 's' : ''} premium configurado${validApis.length > 1 ? 's' : ''}</small>
+                `;
+            }
         }
         
-        console.log('🎉 Todas as APIs premium configuradas e prontas!');
+        if (statusBadge) {
+            if (validApis.length === 0) {
+                statusBadge.textContent = 'Config Needed';
+                statusBadge.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
+            } else {
+                statusBadge.textContent = 'Premium Active';
+                statusBadge.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+            }
+        }
+        
+        console.log(`🔍 Status das APIs: ${validApis.length > 0 ? validApis.join(', ') + ' configuradas' : 'Nenhuma configurada'}`);
     }
 
     initializeElements() {
@@ -148,25 +169,53 @@ class RTCTFProcessor {
     }
 
     autoConfigureKeys() {
-        // Auto-configurar chaves premium se não existirem
-        if (!this.openaiKey && window.API_KEYS) {
-            this.openaiKey = window.API_KEYS.openai || '';
+        // 🔒 Sistema de configuração segura em camadas
+        console.log('🔐 Carregando configuração de APIs...');
+        
+        // 1. Tentar localStorage primeiro (mais seguro)
+        this.openaiKey = localStorage.getItem('openai_api_key') || '';
+        this.anthropicKey = localStorage.getItem('anthropic_api_key') || '';
+        this.groqKey = localStorage.getItem('groq_api_key') || '';
+        this.geminiKey = localStorage.getItem('gemini_api_key') || '';
+        
+        // 2. Se não tiver no localStorage, tentar window.API_KEYS (config.js)
+        if (!this.openaiKey && window.API_KEYS?.openai && !window.API_KEYS.openai.includes('DEMO')) {
+            this.openaiKey = window.API_KEYS.openai;
         }
-        if (!this.anthropicKey && window.API_KEYS) {
-            this.anthropicKey = window.API_KEYS.anthropic || '';
+        if (!this.anthropicKey && window.API_KEYS?.anthropic && !window.API_KEYS.anthropic.includes('DEMO')) {
+            this.anthropicKey = window.API_KEYS.anthropic;
         }
-        if (!this.groqKey && window.API_KEYS) {
-            this.groqKey = window.API_KEYS.groq || '';
+        if (!this.groqKey && window.API_KEYS?.groq && !window.API_KEYS.groq.includes('DEMO')) {
+            this.groqKey = window.API_KEYS.groq;
         }
-        if (!this.geminiKey && window.API_KEYS) {
-            this.geminiKey = window.API_KEYS.gemini || '';
+        if (!this.geminiKey && window.API_KEYS?.gemini && !window.API_KEYS.gemini.includes('DEMO')) {
+            this.geminiKey = window.API_KEYS.gemini;
         }
         
-        // Salvar no localStorage se configurado
-        if (this.openaiKey) localStorage.setItem('openai_api_key', this.openaiKey);
-        if (this.anthropicKey) localStorage.setItem('anthropic_api_key', this.anthropicKey);
-        if (this.groqKey) localStorage.setItem('groq_api_key', this.groqKey);
-        if (this.geminiKey) localStorage.setItem('gemini_api_key', this.geminiKey);
+        // 3. Verificar se há chaves válidas
+        const validKeys = [this.openaiKey, this.anthropicKey, this.groqKey, this.geminiKey]
+            .filter(key => key && !key.includes('DEMO') && !key.includes('SUBSTITUA')).length;
+            
+        if (validKeys === 0) {
+            console.warn('⚠️ Nenhuma chave de API válida encontrada');
+            console.log('💡 Clique em "⚙️ Config APIs" para configurar');
+        } else {
+            console.log(`✅ ${validKeys} chave(s) de API configurada(s)`);
+        }
+        
+        // 4. Salvar chaves válidas no localStorage para próximas sessões
+        if (this.openaiKey && !this.openaiKey.includes('DEMO')) {
+            localStorage.setItem('openai_api_key', this.openaiKey);
+        }
+        if (this.anthropicKey && !this.anthropicKey.includes('DEMO')) {
+            localStorage.setItem('anthropic_api_key', this.anthropicKey);
+        }
+        if (this.groqKey && !this.groqKey.includes('DEMO')) {
+            localStorage.setItem('groq_api_key', this.groqKey);
+        }
+        if (this.geminiKey && !this.geminiKey.includes('DEMO')) {
+            localStorage.setItem('gemini_api_key', this.geminiKey);
+        }
     }
 
     showModelSuccess(modelName) {
