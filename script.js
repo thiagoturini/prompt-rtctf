@@ -2,16 +2,13 @@
 class RTCTFProcessor {
     constructor() {
         // Configurar APIs de diferentes provedores
-        this.geminiKey = 'AIzaSyC5oZWjQmiFP1uZ0PY3Bsl5BoS9YxttS6U';
+        this.geminiKey = localStorage.getItem('gemini_api_key') || '';
         this.openaiKey = localStorage.getItem('openai_api_key') || '';
         this.anthropicKey = localStorage.getItem('anthropic_api_key') || '';
         this.groqKey = localStorage.getItem('groq_api_key') || '';
         
         // Auto-configurar chaves se não existirem (usuário pode configurar suas próprias)
         this.autoConfigureKeys();
-        
-        // Salvar chave do Gemini
-        localStorage.setItem('gemini_api_key', this.geminiKey);
         
         this.initializeElements();
         this.attachEventListeners();
@@ -161,11 +158,15 @@ class RTCTFProcessor {
         if (!this.groqKey && window.API_KEYS) {
             this.groqKey = window.API_KEYS.groq || '';
         }
+        if (!this.geminiKey && window.API_KEYS) {
+            this.geminiKey = window.API_KEYS.gemini || '';
+        }
         
         // Salvar no localStorage se configurado
         if (this.openaiKey) localStorage.setItem('openai_api_key', this.openaiKey);
         if (this.anthropicKey) localStorage.setItem('anthropic_api_key', this.anthropicKey);
         if (this.groqKey) localStorage.setItem('groq_api_key', this.groqKey);
+        if (this.geminiKey) localStorage.setItem('gemini_api_key', this.geminiKey);
     }
 
     showModelSuccess(modelName) {
