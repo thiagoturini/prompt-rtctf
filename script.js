@@ -148,6 +148,10 @@ class RTCTFProcessor {
         this.toneContent = document.getElementById('toneContent');
         this.formatContent = document.getElementById('formatContent');
         this.finalPrompt = document.getElementById('finalPrompt');
+        
+        // Elementos do indicador de modelo
+        this.modelIndicator = document.getElementById('modelIndicator');
+        this.modelName = document.getElementById('modelName');
     }
 
     attachEventListeners() {
@@ -261,8 +265,8 @@ class RTCTFProcessor {
 
         try {
             // Sistema multi-camadas com IA
-            const rtctfStructure = await this.analyzeWithAI(inputText);
-            this.displayResults(rtctfStructure);
+            const { rtctfStructure, modelUsed } = await this.analyzeWithAI(inputText);
+            this.displayResults(rtctfStructure, modelUsed);
             this.showFeedback('Prompt estruturado com sucesso usando IA inteligente!', 'success');
         } catch (error) {
             console.error('Erro ao gerar prompt:', error);
@@ -270,9 +274,9 @@ class RTCTFProcessor {
             
             // Fallback para análise básica
             const rtctfStructure = this.analyzeWithBasicLogic(inputText);
-            this.displayResults(rtctfStructure);
+            this.displayResults(rtctfStructure, 'Análise Local Inteligente');
         } finally {
-            this.generateBtn.textContent = '� Gerar Prompt RTCTF Inteligente';
+            this.generateBtn.textContent = '🚀 Gerar Prompt RTCTF Inteligente';
             this.generateBtn.disabled = false;
         }
     }
@@ -280,10 +284,10 @@ class RTCTFProcessor {
     async analyzeWithAI(text) {
         // Tentar com diferentes modelos em ordem de qualidade
         const models = [
-            { name: 'OpenAI GPT-3.5', method: () => this.tryOpenAI(text) },
-            { name: 'Anthropic Claude', method: () => this.tryAnthropic(text) },
-            { name: 'Google Gemini', method: () => this.tryGemini(text) },
-            { name: 'Local Groq API', method: () => this.tryGroq(text) }
+            { name: 'OpenAI GPT-3.5', method: () => this.tryOpenAI(text), className: 'openai' },
+            { name: 'Anthropic Claude', method: () => this.tryAnthropic(text), className: 'claude' },
+            { name: 'Google Gemini', method: () => this.tryGemini(text), className: 'gemini' },
+            { name: 'Groq Mixtral', method: () => this.tryGroq(text), className: 'groq' }
         ];
 
         for (const model of models) {
@@ -293,7 +297,13 @@ class RTCTFProcessor {
                 if (this.validateResult(result)) {
                     console.log(`✅ Sucesso com ${model.name}!`);
                     this.showModelSuccess(model.name);
-                    return result;
+                    return { 
+                        rtctfStructure: result, 
+                        modelUsed: { 
+                            name: model.name, 
+                            className: model.className 
+                        } 
+                    };
                 }
             } catch (e) {
                 console.log(`❌ ${model.name} falhou:`, e.message);
@@ -302,7 +312,14 @@ class RTCTFProcessor {
         }
 
         // Se todos falharam, usar análise local superinteligente
-        return this.superSmartLocalAnalysis(text);
+        const result = this.superSmartLocalAnalysis(text);
+        return { 
+            rtctfStructure: result, 
+            modelUsed: { 
+                name: 'Análise Local Inteligente', 
+                className: 'local' 
+            } 
+        };
     }
 
     async tryOpenAI(text) {
@@ -815,7 +832,7 @@ Return only JSON:
         );
     }
 
-    displayResults(rtctf) {
+    displayResults(rtctf, modelUsed = null) {
         this.roleContent.textContent = rtctf.role;
         this.taskContent.textContent = rtctf.task;
         this.contextContent.textContent = rtctf.context;
@@ -823,8 +840,49 @@ Return only JSON:
         this.formatContent.textContent = rtctf.format;
         
         this.updateFinalPrompt();
+        
+        // Mostrar indicador do modelo usado
+        this.showModelIndicator(modelUsed);
+        
         this.resultSection.style.display = 'block';
         this.resultSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    showModelIndicator(modelUsed) {
+        if (!modelUsed) return;
+        
+        // Configurar o texto e ícone do modelo
+        const modelIcons = {
+            'OpenAI GPT-3.5': '🤖',
+            'Anthropic Claude': '🧠',
+            'Google Gemini': '🔮',
+            'Groq Mixtral': '⚡',
+            'Análise Local Inteligente': '🔬'
+        };
+        
+        const icon = modelIcons[modelUsed.name] || '🚀';
+        
+        // Atualizar o ícone
+        const iconElement = this.modelIndicator.querySelector('.model-icon');
+        if (iconElement) {
+            iconElement.textContent = icon;
+        }
+        
+        // Atualizar o nome do modelo
+        if (this.modelName) {
+            this.modelName.textContent = modelUsed.name;
+        }
+        
+        // Aplicar classe CSS específica do modelo
+        this.modelIndicator.className = 'model-indicator';
+        if (modelUsed.className) {
+            this.modelIndicator.classList.add(modelUsed.className);
+        }
+        
+        // Mostrar o indicador
+        this.modelIndicator.style.display = 'block';
+        
+        console.log(`📊 Modelo exibido: ${modelUsed.name}`);
     }
 
     updateFinalPrompt() {
@@ -876,6 +934,7 @@ FORMAT: ${format}`;
     resetForm() {
         this.inputText.value = '';
         this.resultSection.style.display = 'none';
+        this.modelIndicator.style.display = 'none';
         this.inputText.focus();
         this.showFeedback('Formulário resetado. Pronto para um novo prompt!', 'success');
     }

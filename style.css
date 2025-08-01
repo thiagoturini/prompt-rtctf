@@ -506,3 +506,91 @@ body {
         typewriter 2s steps(20, end),
         blink 1s infinite 2s;
 }
+
+/* Model Indicator */
+.model-indicator {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border: 1px solid var(--vintage-border);
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.model-used {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    font-family: 'Courier Prime', monospace;
+    color: var(--vintage-faded);
+    font-size: 0.9rem;
+}
+
+.model-icon {
+    font-size: 1.2rem;
+    animation: pulse 2s infinite;
+}
+
+.model-text {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.model-text strong {
+    color: var(--vintage-typewriter);
+    font-weight: bold;
+}
+
+/* Cores específicas para cada modelo */
+.model-indicator.openai {
+    background: linear-gradient(135deg, #e8f5e8, #d4edda);
+    border-color: #4CAF50;
+}
+
+.model-indicator.openai .model-icon {
+    color: #4CAF50;
+}
+
+.model-indicator.claude {
+    background: linear-gradient(135deg, #fff3e0, #ffe0b3);
+    border-color: #FF6B35;
+}
+
+.model-indicator.claude .model-icon {
+    color: #FF6B35;
+}
+
+.model-indicator.gemini {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-color: #2196F3;
+}
+
+.model-indicator.gemini .model-icon {
+    color: #2196F3;
+}
+
+.model-indicator.groq {
+    background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+    border-color: #8B5CF6;
+}
+
+.model-indicator.groq .model-icon {
+    color: #8B5CF6;
+}
+
+.model-indicator.local {
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    border-color: #FFC107;
+}
+
+.model-indicator.local .model-icon {
+    color: #FFC107;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
