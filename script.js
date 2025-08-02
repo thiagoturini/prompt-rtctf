@@ -182,29 +182,42 @@ class RTCTFProcessor {
         this.groqKey = localStorage.getItem('groq_api_key') || '';
         this.geminiKey = localStorage.getItem('gemini_api_key') || '';
         
+        // DEBUG: Mostrar chaves carregadas
+        console.log('🔍 Chaves no localStorage:');
+        console.log('OpenAI:', this.openaiKey ? this.openaiKey.substring(0, 10) + '...' : 'Não encontrada');
+        console.log('Anthropic:', this.anthropicKey ? this.anthropicKey.substring(0, 10) + '...' : 'Não encontrada');
+        console.log('Groq:', this.groqKey ? this.groqKey.substring(0, 10) + '...' : 'Não encontrada');
+        console.log('Gemini:', this.geminiKey ? this.geminiKey.substring(0, 10) + '...' : 'Não encontrada');
+        
         // 2. Se não tiver no localStorage, tentar window.API_KEYS (config.js)
         if (!this.openaiKey && window.API_KEYS?.openai && !window.API_KEYS.openai.includes('DEMO')) {
             this.openaiKey = window.API_KEYS.openai;
+            console.log('✅ OpenAI carregada do config.js');
         }
         if (!this.anthropicKey && window.API_KEYS?.anthropic && !window.API_KEYS.anthropic.includes('DEMO')) {
             this.anthropicKey = window.API_KEYS.anthropic;
+            console.log('✅ Anthropic carregada do config.js');
         }
         if (!this.groqKey && window.API_KEYS?.groq && !window.API_KEYS.groq.includes('DEMO')) {
             this.groqKey = window.API_KEYS.groq;
+            console.log('✅ Groq carregada do config.js');
         }
         if (!this.geminiKey && window.API_KEYS?.gemini && !window.API_KEYS.gemini.includes('DEMO')) {
             this.geminiKey = window.API_KEYS.gemini;
+            console.log('✅ Gemini carregada do config.js');
         }
         
         // 3. Verificar se há chaves válidas
         const validKeys = [this.openaiKey, this.anthropicKey, this.groqKey, this.geminiKey]
             .filter(key => key && !key.includes('DEMO') && !key.includes('SUBSTITUA')).length;
             
+        console.log(`🔢 Total de chaves válidas encontradas: ${validKeys}`);
+            
         if (validKeys === 0) {
             console.warn('⚠️ Nenhuma chave de API válida encontrada');
             console.log('💡 Clique em "⚙️ Config APIs" para configurar');
         } else {
-            console.log(`✅ ${validKeys} chave(s) de API configurada(s)`);
+            console.log(`✅ ${validKeys} chave(s) de API configurada(s) e prontas para uso!`);
         }
         
         // 4. Salvar chaves válidas no localStorage para próximas sessões
@@ -282,18 +295,43 @@ class RTCTFProcessor {
     }
 
     async analyzeWithAI(text) {
+        console.log('🚀 Iniciando análise com IA...');
+        console.log('📝 Texto a analisar:', text.substring(0, 50) + '...');
+        
+        // Verificar chaves disponíveis antes de tentar
+        const availableKeys = {
+            openai: this.openaiKey && !this.openaiKey.includes('DEMO') && !this.openaiKey.includes('SUBSTITUA') && this.openaiKey.length > 20,
+            anthropic: this.anthropicKey && !this.anthropicKey.includes('DEMO') && !this.anthropicKey.includes('SUBSTITUA') && this.anthropicKey.length > 20,
+            gemini: this.geminiKey && !this.geminiKey.includes('DEMO') && !this.geminiKey.includes('SUBSTITUA') && this.geminiKey.length > 20,
+            groq: this.groqKey && !this.groqKey.includes('DEMO') && !this.groqKey.includes('SUBSTITUA') && this.groqKey.length > 20
+        };
+        
+        console.log('🔑 Chaves disponíveis:', availableKeys);
+        console.log('🔍 Debug chaves:');
+        console.log('  OpenAI:', this.openaiKey ? this.openaiKey.substring(0, 10) + '...' : 'null');
+        console.log('  Anthropic:', this.anthropicKey ? this.anthropicKey.substring(0, 10) + '...' : 'null');
+        console.log('  Gemini:', this.geminiKey ? this.geminiKey.substring(0, 10) + '...' : 'null');
+        console.log('  Groq:', this.groqKey ? this.groqKey.substring(0, 10) + '...' : 'null');
+        
         // Tentar com diferentes modelos em ordem de qualidade
         const models = [
-            { name: 'OpenAI GPT-3.5', method: () => this.tryOpenAI(text), className: 'openai' },
-            { name: 'Anthropic Claude', method: () => this.tryAnthropic(text), className: 'claude' },
-            { name: 'Google Gemini', method: () => this.tryGemini(text), className: 'gemini' },
-            { name: 'Groq Mixtral', method: () => this.tryGroq(text), className: 'groq' }
+            { name: 'OpenAI GPT-3.5', method: () => this.tryOpenAI(text), className: 'openai', hasKey: availableKeys.openai },
+            { name: 'Anthropic Claude', method: () => this.tryAnthropic(text), className: 'claude', hasKey: availableKeys.anthropic },
+            { name: 'Google Gemini', method: () => this.tryGemini(text), className: 'gemini', hasKey: availableKeys.gemini },
+            { name: 'Groq Mixtral', method: () => this.tryGroq(text), className: 'groq', hasKey: availableKeys.groq }
         ];
 
         for (const model of models) {
+            if (!model.hasKey) {
+                console.log(`⏭️ Pulando ${model.name} - chave não disponível`);
+                continue;
+            }
+            
             try {
                 console.log(`🔄 Tentando ${model.name}...`);
                 const result = await model.method();
+                console.log(`📤 Resposta recebida de ${model.name}:`, result ? 'Sucesso' : 'Falhou');
+                
                 if (this.validateResult(result)) {
                     console.log(`✅ Sucesso com ${model.name}!`);
                     this.showModelSuccess(model.name);
@@ -304,6 +342,8 @@ class RTCTFProcessor {
                             className: model.className 
                         } 
                     };
+                } else {
+                    console.log(`❌ ${model.name} retornou resultado inválido`);
                 }
             } catch (e) {
                 console.log(`❌ ${model.name} falhou:`, e.message);
@@ -311,6 +351,7 @@ class RTCTFProcessor {
             }
         }
 
+        console.log('🔬 Todas as APIs falharam, usando análise local...');
         // Se todos falharam, usar análise local superinteligente
         const result = this.superSmartLocalAnalysis(text);
         return { 

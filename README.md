@@ -1,33 +1,38 @@
-# 🚀 RTCTF AI Prompt Generator
+# 🚀 RTCTF - Estruturador de Prompts Inteligente
 
-[![Deploy Status](https://img.shields.io/badge/Deploy-Ready-green?style=for-the-badge)](https://github.com/thiagoturini/prompt-rtctf)
+[![Deploy Status](https://img.shields.io/badge/Deploy-Ready-green?style=for-the-badge)](https://thiagoturini.github.io/prompt-rtctf/)
 [![AI Powered](https://img.shields.io/badge/AI-Multi--Model-blue?style=for-the-badge&logo=openai)](https://openai.com)
 
-Transform any text into structured **RTCTF prompts** using the best AI models available.
+Transforme qualquer texto em um prompt estruturado seguindo a metodologia **Role, Task, Context, Tone, Format** usando IA avançada.
 
-## 🎯 What it does
+🌐 **Demo Online**: [https://thiagoturini.github.io/prompt-rtctf/](https://thiagoturini.github.io/prompt-rtctf/)
 
-Converts simple text into professional prompts with:
-- **R**ole: Perfect specialist for the task
-- **T**ask: Clear, professional reformulation  
-- **C**ontext: Relevant background information
-- **T**one: Appropriate communication style
-- **F**ormat: Ideal response structure
+## 🎯 O que faz
 
-## ✨ Features
+Converte texto simples em prompts profissionais com:
+- **R**ole: Especialista perfeito para a tarefa
+- **T**ask: Reformulação clara e profissional  
+- **C**ontext: Informações relevantes de contexto
+- **T**one: Estilo de comunicação apropriado
+- **F**ormat: Estrutura ideal de resposta
 
-🤖 **Multi-AI System**: OpenAI GPT-3.5 + Claude + Groq + Gemini  
-⚡ **Lightning Fast**: Intelligent model prioritization  
-🎯 **High Accuracy**: Advanced result validation  
-🆓 **Free to Use**: Pre-configured with free APIs  
-📱 **Mobile Ready**: Works on any device  
-🎨 **Modern UI**: Clean, intuitive interface  
+## ✨ Características
 
-## 🚀 Quick Start
+🤖 **4 Modelos de IA**: OpenAI GPT-3.5 + Claude + Groq + Gemini  
+⚡ **Ultra-rápido**: Priorização inteligente de modelos  
+🎯 **Alta Precisão**: Validação avançada de resultados  
+🆓 **Gratuito**: Configurado com APIs gratuitas  
+📱 **Mobile Ready**: Funciona em qualquer device  
+🎨 **Interface Moderna**: Design limpo e intuitivo  
+🔐 **Configuração Segura**: Chaves API protegidas localmente
 
-1. **Visit the app** → [Live Demo](https://your-app.netlify.app)
-2. **Enter your text** in the input field
-3. **Click "Generate RTCTF"** 
+## 🚀 Como Usar
+
+### Acesso Rápido (Online)
+1. **Acesse** → [Demo Online](https://thiagoturini.github.io/prompt-rtctf/)
+2. **Digite seu texto** no campo de entrada
+3. **Clique "Gerar RTCTF"** 
+4. **Veja a mágica** acontecer! 
 4. **Copy the structured prompt**
 
 ### Example

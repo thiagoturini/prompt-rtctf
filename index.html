@@ -111,6 +111,15 @@
     </div>
 
     <script src="config.js"></script>
+    <script>
+        // Tentar carregar configuração local (segura) se existir
+        const localScript = document.createElement('script');
+        localScript.src = 'config.local.js';
+        localScript.onerror = () => console.log('💡 config.local.js não encontrado - usando configuração padrão');
+        localScript.onload = () => console.log('🔐 Configuração local carregada com sucesso!');
+        document.head.appendChild(localScript);
+    </script>
+    <script src="auto-setup.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

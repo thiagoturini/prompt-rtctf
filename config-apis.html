@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurar APIs - RTCTF</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .config-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .config-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .config-header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .config-header p {
+            color: #666;
+            font-size: 18px;
+        }
+        
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .api-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 25px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+        
+        .api-card:hover {
+            border-color: #4CAF50;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
+        }
+        
+        .api-card.recommended {
+            border-color: #4CAF50;
+            background: linear-gradient(135deg, #f8fff8, #ffffff);
+        }
+        
+        .api-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .api-icon {
+            font-size: 32px;
+            margin-right: 15px;
+        }
+        
+        .api-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .api-subtitle {
+            color: #666;
+            margin: 0;
+            font-size: 14px;
+        }
+        
+        .api-features {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+        
+        .api-features li {
+            padding: 5px 0;
+            color: #555;
+        }
+        
+        .api-features li:before {
+            content: "✅ ";
+            color: #4CAF50;
+        }
+        
+        .api-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            transition: border-color 0.3s ease;
+        }
+        
+        .api-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        
+        .api-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 10px 0;
+            transition: transform 0.3s ease;
+        }
+        
+        .api-link:hover {
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+        
+        .save-section {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #f0f8ff, #e8f5e8);
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+        
+        .save-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.3s ease;
+        }
+        
+        .save-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .back-btn {
+            background: #666;
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .status-valid {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .status-invalid {
+            background: #ff6b35;
+            color: white;
+        }
+        
+        .instructions {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .free-badge {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .premium-badge {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="config-container">
+        <a href="index.html" class="back-btn">← Voltar para o RTCTF</a>
+        
+        <div class="config-header">
+            <h1>🚀 Configurar APIs de IA</h1>
+            <p>Configure as melhores APIs de IA para obter resultados perfeitos</p>
+        </div>
+
+        <div class="api-grid">
+            <!-- Groq (Recomendado - Gratuito) -->
+            <div class="api-card recommended">
+                <div class="api-header">
+                    <div class="api-icon">⚡</div>
+                    <div>
+                        <h3 class="api-title">
+                            Groq
+                            <span class="free-badge">100% GRÁTIS</span>
+                        </h3>
+                        <p class="api-subtitle">Recomendado para iniciantes</p>
+                    </div>
+                </div>
+                
+                <ul class="api-features">
+                    <li>Completamente gratuito</li>
+                    <li>Ultra-rápido (Mixtral-8x7B)</li>
+                    <li>Sem necessidade de cartão</li>
+                    <li>Limite generoso por dia</li>
+                </ul>
+                
+                <div class="instructions">
+                    <strong>📋 Como obter:</strong><br>
+                    1. Acesse console.groq.com/keys<br>
+                    2. Crie conta gratuita<br>
+                    3. Clique "Create API Key"<br>
+                    4. Copie a chave (começa com gsk_...)
+                </div>
+                
+                <a href="https://console.groq.com/keys" target="_blank" class="api-link">
+                    🔑 Obter Chave Gratuita
+                </a>
+                
+                <input 
+                    type="password" 
+                    class="api-input" 
+                    id="groq-key" 
+                    placeholder="gsk_..." 
+                    data-service="groq"
+                >
+                <span class="status-indicator" id="groq-status"></span>
+            </div>
+
+            <!-- OpenAI -->
+            <div class="api-card">
+                <div class="api-header">
+                    <div class="api-icon">🤖</div>
+                    <div>
+                        <h3 class="api-title">
+                            OpenAI
+                            <span class="premium-badge">PREMIUM</span>
+                        </h3>
+                        <p class="api-subtitle">Melhor qualidade (GPT-3.5)</p>
+                    </div>
+                </div>
+                
+                <ul class="api-features">
+                    <li>Qualidade excepcional</li>
+                    <li>GPT-3.5 Turbo</li>
+                    <li>Resultados mais precisos</li>
+                    <li>Custo baixo (~$0.002/1k tokens)</li>
+                </ul>
+                
+                <div class="instructions">
+                    <strong>📋 Como obter:</strong><br>
+                    1. Acesse platform.openai.com/api-keys<br>
+                    2. Crie conta e adicione $5+ de crédito<br>
+                    3. Gere nova chave secreta<br>
+                    4. Copie a chave (começa com sk-...)
+                </div>
+                
+                <a href="https://platform.openai.com/api-keys" target="_blank" class="api-link">
+                    🔑 Obter Chave OpenAI
+                </a>
+                
+                <input 
+                    type="password" 
+                    class="api-input" 
+                    id="openai-key" 
+                    placeholder="sk-..." 
+                    data-service="openai"
+                >
+                <span class="status-indicator" id="openai-status"></span>
+            </div>
+
+            <!-- Anthropic Claude -->
+            <div class="api-card">
+                <div class="api-header">
+                    <div class="api-icon">🧠</div>
+                    <div>
+                        <h3 class="api-title">
+                            Anthropic Claude
+                            <span class="premium-badge">PREMIUM</span>
+                        </h3>
+                        <p class="api-subtitle">Inteligência avançada</p>
+                    </div>
+                </div>
+                
+                <ul class="api-features">
+                    <li>Claude Haiku (rápido)</li>
+                    <li>Excelente para análise</li>
+                    <li>Respostas detalhadas</li>
+                    <li>Boa relação custo/benefício</li>
+                </ul>
+                
+                <div class="instructions">
+                    <strong>📋 Como obter:</strong><br>
+                    1. Acesse console.anthropic.com<br>
+                    2. Crie conta e adicione créditos<br>
+                    3. Vá em API Keys<br>
+                    4. Copie a chave (começa com sk-ant-...)
+                </div>
+                
+                <a href="https://console.anthropic.com/" target="_blank" class="api-link">
+                    🔑 Obter Chave Claude
+                </a>
+                
+                <input 
+                    type="password" 
+                    class="api-input" 
+                    id="anthropic-key" 
+                    placeholder="sk-ant-..." 
+                    data-service="anthropic"
+                >
+                <span class="status-indicator" id="anthropic-status"></span>
+            </div>
+
+            <!-- Google Gemini -->
+            <div class="api-card">
+                <div class="api-header">
+                    <div class="api-icon">🔮</div>
+                    <div>
+                        <h3 class="api-title">
+                            Google Gemini
+                            <span class="free-badge">GRÁTIS*</span>
+                        </h3>
+                        <p class="api-subtitle">*Com limitações</p>
+                    </div>
+                </div>
+                
+                <ul class="api-features">
+                    <li>Limite gratuito generoso</li>
+                    <li>Gemini Pro modelo</li>
+                    <li>Boa para uso casual</li>
+                    <li>Sem necessidade de cartão</li>
+                </ul>
+                
+                <div class="instructions">
+                    <strong>📋 Como obter:</strong><br>
+                    1. Acesse aistudio.google.com/app/apikey<br>
+                    2. Faça login com conta Google<br>
+                    3. Clique "Create API Key"<br>
+                    4. Copie a chave (começa com AIza...)
+                </div>
+                
+                <a href="https://aistudio.google.com/app/apikey" target="_blank" class="api-link">
+                    🔑 Obter Chave Gemini
+                </a>
+                
+                <input 
+                    type="password" 
+                    class="api-input" 
+                    id="gemini-key" 
+                    placeholder="AIza..." 
+                    data-service="gemini"
+                >
+                <span class="status-indicator" id="gemini-status"></span>
+            </div>
+        </div>
+
+        <div class="save-section">
+            <h3>💾 Salvar Configurações</h3>
+            <p>Suas chaves ficam salvas apenas no seu navegador - nunca são enviadas para outros lugares</p>
+            
+            <button class="save-btn" onclick="saveAllKeys()">
+                💾 Salvar e Voltar ao RTCTF
+            </button>
+            
+            <button class="save-btn" onclick="testConnections()" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                🧪 Testar Conexões
+            </button>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        // Carregar chaves existentes ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            loadExistingKeys();
+            setupRealTimeValidation();
+        });
+        
+        // Carregar chaves já salvas
+        function loadExistingKeys() {
+            const services = ['groq', 'openai', 'anthropic', 'gemini'];
+            
+            services.forEach(service => {
+                const key = localStorage.getItem(`${service}_api_key`);
+                const input = document.getElementById(`${service}-key`);
+                const status = document.getElementById(`${service}-status`);
+                
+                if (key && !key.includes('DEMO')) {
+                    input.value = key;
+                    updateStatus(service, true);
+                } else {
+                    updateStatus(service, false);
+                }
+            });
+        }
+        
+        // Validação em tempo real
+        function setupRealTimeValidation() {
+            const inputs = document.querySelectorAll('.api-input');
+            
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    const service = this.dataset.service;
+                    const isValid = validateKey(service, this.value);
+                    updateStatus(service, isValid);
+                });
+            });
+        }
+        
+        // Validar formato da chave
+        function validateKey(service, key) {
+            if (!key || key.length < 10) return false;
+            
+            const patterns = {
+                groq: /^gsk_[a-zA-Z0-9_-]{40,}$/,
+                openai: /^sk-[a-zA-Z0-9]{40,}$/,
+                anthropic: /^sk-ant-[a-zA-Z0-9_-]{40,}$/,
+                gemini: /^AIza[a-zA-Z0-9_-]{30,}$/
+            };
+            
+            return patterns[service] ? patterns[service].test(key) : key.length > 20;
+        }
+        
+        // Atualizar indicador de status
+        function updateStatus(service, isValid) {
+            const status = document.getElementById(`${service}-status`);
+            
+            if (isValid) {
+                status.textContent = 'Válida';
+                status.className = 'status-indicator status-valid';
+            } else {
+                status.textContent = 'Inválida';
+                status.className = 'status-indicator status-invalid';
+            }
+        }
+        
+        // Salvar todas as chaves
+        function saveAllKeys() {
+            const services = ['groq', 'openai', 'anthropic', 'gemini'];
+            let saved = 0;
+            
+            services.forEach(service => {
+                const input = document.getElementById(`${service}-key`);
+                const key = input.value.trim();
+                
+                if (key && validateKey(service, key)) {
+                    localStorage.setItem(`${service}_api_key`, key);
+                    saved++;
+                }
+            });
+            
+            if (saved > 0) {
+                alert(`✅ ${saved} chave(s) salva(s) com sucesso!\n\nVoltando ao RTCTF...`);
+                window.location.href = 'index.html';
+            } else {
+                alert('❌ Nenhuma chave válida para salvar.\n\nVerifique os formatos e tente novamente.');
+            }
+        }
+        
+        // Testar conexões
+        async function testConnections() {
+            const services = ['groq', 'openai', 'anthropic', 'gemini'];
+            const results = [];
+            
+            for (const service of services) {
+                const input = document.getElementById(`${service}-key`);
+                const key = input.value.trim();
+                
+                if (key && validateKey(service, key)) {
+                    try {
+                        const success = await testAPIConnection(service, key);
+                        results.push(`${service}: ${success ? '✅ Funcionando' : '❌ Falhou'}`);
+                    } catch (e) {
+                        results.push(`${service}: ❌ Erro: ${e.message}`);
+                    }
+                } else {
+                    results.push(`${service}: ⏭️ Não configurado`);
+                }
+            }
+            
+            alert('🧪 Resultados dos Testes:\n\n' + results.join('\n'));
+        }
+        
+        // Testar conexão específica da API
+        async function testAPIConnection(service, key) {
+            const endpoints = {
+                groq: 'https://api.groq.com/openai/v1/models',
+                openai: 'https://api.openai.com/v1/models',
+                anthropic: 'https://api.anthropic.com/v1/models', // Pode não funcionar por CORS
+                gemini: `https://generativelanguage.googleapis.com/v1beta/models?key=${key}`
+            };
+            
+            const headers = {
+                groq: { 'Authorization': `Bearer ${key}` },
+                openai: { 'Authorization': `Bearer ${key}` },
+                anthropic: { 'x-api-key': key, 'anthropic-version': '2023-06-01' },
+                gemini: {}
+            };
+            
+            try {
+                const response = await fetch(endpoints[service], {
+                    headers: headers[service]
+                });
+                
+                return response.ok;
+            } catch (e) {
+                console.error(`Erro testando ${service}:`, e);
+                return false;
+            }
+        }
+    </script>
+</body>
+</html>
