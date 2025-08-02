@@ -1,19 +1,45 @@
 // Estruturador de Prompts RTCTF com Múltiplos Modelos de IA
 class RTCTFProcessor {
     constructor() {
-        // Configurar APIs de diferentes provedores
-        this.geminiKey = localStorage.getItem('gemini_api_key') || '';
-        this.openaiKey = localStorage.getItem('openai_api_key') || '';
-        this.anthropicKey = localStorage.getItem('anthropic_api_key') || '';
-        this.groqKey = localStorage.getItem('groq_api_key') || '';
+        console.log('🚀 Iniciando RTCTFProcessor...');
         
-        // Auto-configurar chaves se não existirem (usuário pode configurar suas próprias)
+        // Auto-configurar chaves PRIMEIRO
         this.autoConfigureKeys();
         
-        this.initializeElements();
-        this.attachEventListeners();
-        this.updateApiStatus();
-        this.addAPIConfigButton();
+        // Verificar se encontrou pelo menos uma chave válida
+        this.checkValidKeys();
+        
+        // Só inicializar elementos DOM se eles existirem
+        try {
+            this.initializeElements();
+            this.attachEventListeners();
+            this.updateApiStatus();
+            this.addAPIConfigButton();
+            console.log('✅ Interface DOM inicializada');
+        } catch(error) {
+            console.log('⚠️ Interface DOM não disponível (modo teste):', error.message);
+            console.log('✅ Processador criado apenas para APIs');
+        }
+    }
+    
+    checkValidKeys() {
+        const hasGroq = this.groqKey && this.groqKey.length > 20 && !this.groqKey.includes('DEMO');
+        const hasClaude = this.anthropicKey && this.anthropicKey.length > 20 && !this.anthropicKey.includes('DEMO');
+        const hasOpenAI = this.openaiKey && this.openaiKey.length > 20 && !this.openaiKey.includes('DEMO');
+        const hasGemini = this.geminiKey && this.geminiKey.length > 20 && !this.geminiKey.includes('DEMO');
+        
+        console.log('🔍 Verificação rápida de chaves válidas:');
+        console.log('Groq:', hasGroq ? '✅' : '❌');
+        console.log('Claude:', hasClaude ? '✅' : '❌'); 
+        console.log('OpenAI:', hasOpenAI ? '✅' : '❌');
+        console.log('Gemini:', hasGemini ? '✅' : '❌');
+        
+        if (!hasGroq && !hasClaude && !hasOpenAI && !hasGemini) {
+            console.warn('⚠️ NENHUMA CHAVE VÁLIDA ENCONTRADA!');
+            console.log('📝 Configure suas chaves na página config-apis.html');
+        } else {
+            console.log('🎉 Pelo menos uma API está configurada!');
+        }
     }
 
     addAPIConfigButton() {
@@ -134,6 +160,7 @@ class RTCTFProcessor {
     }
 
     initializeElements() {
+        // Verificar se os elementos existem antes de tentar acessá-los
         this.inputText = document.getElementById('inputText');
         this.generateBtn = document.getElementById('generateBtn');
         this.resultSection = document.getElementById('resultSection');
@@ -152,24 +179,43 @@ class RTCTFProcessor {
         // Elementos do indicador de modelo
         this.modelIndicator = document.getElementById('modelIndicator');
         this.modelName = document.getElementById('modelName');
+        
+        // Verificar se elementos essenciais existem
+        if (!this.inputText) {
+            throw new Error('Elemento inputText não encontrado');
+        }
+        if (!this.generateBtn) {
+            throw new Error('Elemento generateBtn não encontrado');
+        }
     }
 
     attachEventListeners() {
-        this.generateBtn.addEventListener('click', () => this.generatePrompt());
-        this.copyBtn.addEventListener('click', () => this.copyPrompt());
-        this.resetBtn.addEventListener('click', () => this.resetForm());
+        // Só adicionar listeners se os elementos existirem
+        if (this.generateBtn) {
+            this.generateBtn.addEventListener('click', () => this.generatePrompt());
+        }
+        if (this.copyBtn) {
+            this.copyBtn.addEventListener('click', () => this.copyPrompt());
+        }
+        if (this.resetBtn) {
+            this.resetBtn.addEventListener('click', () => this.resetForm());
+        }
         
         // Event listeners para atualizar o prompt final quando houver edição
-        [this.roleContent, this.taskContent, this.contextContent, this.toneContent, this.formatContent].forEach(element => {
-            element.addEventListener('input', () => this.updateFinalPrompt());
-        });
+        if (this.roleContent && this.taskContent && this.contextContent && this.toneContent && this.formatContent) {
+            [this.roleContent, this.taskContent, this.contextContent, this.toneContent, this.formatContent].forEach(element => {
+                element.addEventListener('input', () => this.updateFinalPrompt());
+            });
+        }
 
         // Enter no textarea para gerar
-        this.inputText.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === 'Enter') {
-                this.generatePrompt();
-            }
-        });
+        if (this.inputText) {
+            this.inputText.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    this.generatePrompt();
+                }
+            });
+        }
     }
 
     autoConfigureKeys() {
@@ -182,12 +228,12 @@ class RTCTFProcessor {
         this.groqKey = localStorage.getItem('groq_api_key') || '';
         this.geminiKey = localStorage.getItem('gemini_api_key') || '';
         
-        // DEBUG: Mostrar chaves carregadas
-        console.log('🔍 Chaves no localStorage:');
-        console.log('OpenAI:', this.openaiKey ? this.openaiKey.substring(0, 10) + '...' : 'Não encontrada');
-        console.log('Anthropic:', this.anthropicKey ? this.anthropicKey.substring(0, 10) + '...' : 'Não encontrada');
-        console.log('Groq:', this.groqKey ? this.groqKey.substring(0, 10) + '...' : 'Não encontrada');
-        console.log('Gemini:', this.geminiKey ? this.geminiKey.substring(0, 10) + '...' : 'Não encontrada');
+        // DEBUG: Mostrar chaves carregadas - com mais detalhes
+        console.log('🔍 Chaves carregadas do localStorage:');
+        console.log('OpenAI:', this.openaiKey ? `✅ ${this.openaiKey.substring(0, 10)}... (${this.openaiKey.length} chars)` : '❌ Não encontrada');
+        console.log('Anthropic:', this.anthropicKey ? `✅ ${this.anthropicKey.substring(0, 10)}... (${this.anthropicKey.length} chars)` : '❌ Não encontrada');
+        console.log('Groq:', this.groqKey ? `✅ ${this.groqKey.substring(0, 10)}... (${this.groqKey.length} chars)` : '❌ Não encontrada');
+        console.log('Gemini:', this.geminiKey ? `✅ ${this.geminiKey.substring(0, 10)}... (${this.geminiKey.length} chars)` : '❌ Não encontrada');
         
         // 2. Se não tiver no localStorage, tentar window.API_KEYS (config.js)
         if (!this.openaiKey && window.API_KEYS?.openai && !window.API_KEYS.openai.includes('DEMO')) {
@@ -233,6 +279,27 @@ class RTCTFProcessor {
         if (this.geminiKey && !this.geminiKey.includes('DEMO')) {
             localStorage.setItem('gemini_api_key', this.geminiKey);
         }
+        
+        console.log('💡 Para debugar chaves, use no console: processor.debugKeys()');
+    }
+
+    // Função de debug para o usuário
+    debugKeys() {
+        console.log('🔍 DEBUG COMPLETO DAS CHAVES:');
+        console.log('=====================================');
+        this.autoConfigureKeys();
+        
+        console.log('\n🔑 Status das Chaves:');
+        console.log('Groq:', this.groqKey ? `✅ Configurada (${this.groqKey.length} chars)` : '❌ Não configurada');
+        console.log('Claude:', this.anthropicKey ? `✅ Configurada (${this.anthropicKey.length} chars)` : '❌ Não configurada');
+        console.log('OpenAI:', this.openaiKey ? `✅ Configurada (${this.openaiKey.length} chars)` : '❌ Não configurada');
+        console.log('Gemini:', this.geminiKey ? `✅ Configurada (${this.geminiKey.length} chars)` : '❌ Não configurada');
+        
+        console.log('\n🔍 Validação:');
+        console.log('Groq válida:', this.isValidKey(this.groqKey, 'groq'));
+        console.log('Claude válida:', this.isValidKey(this.anthropicKey, 'anthropic'));
+        console.log('OpenAI válida:', this.isValidKey(this.openaiKey, 'openai'));
+        console.log('Gemini válida:', this.isValidKey(this.geminiKey, 'gemini'));
     }
 
     showModelSuccess(modelName) {
@@ -247,7 +314,7 @@ class RTCTFProcessor {
         this.showFeedback(`${icon} Prompt gerado com ${modelName}!`, 'success');
     }
 
-    // Validação melhorada de chaves
+    // Validação melhorada de chaves - MENOS RESTRITIVA
     isValidKey(key, service) {
         if (!key || typeof key !== 'string') {
             console.log(`❌ ${service}: Chave vazia ou inválida`);
@@ -260,20 +327,13 @@ class RTCTFProcessor {
             return false;
         }
         
-        // Validação específica por serviço
-        const validations = {
-            openai: key.startsWith('sk-') && key.length > 30,
-            anthropic: key.startsWith('sk-ant-') && key.length > 30,
-            groq: key.startsWith('gsk_') && key.length > 30,
-            gemini: key.startsWith('AIza') && key.length > 30
-        };
-        
-        const isValid = validations[service] || key.length > 20;
+        // Validação básica - só verificar se tem tamanho mínimo
+        const isValid = key.length >= 20 && !key.includes('DEMO');
         
         if (isValid) {
-            console.log(`✅ ${service}: Chave válida (${key.length} chars)`);
+            console.log(`✅ ${service}: Chave válida (${key.length} chars) - Inicia com: ${key.substring(0, 4)}...`);
         } else {
-            console.log(`❌ ${service}: Formato inválido (${key.length} chars, inicia com: ${key.substring(0, 4)}...)`);
+            console.log(`❌ ${service}: Chave muito curta ou inválida (${key.length} chars)`);
         }
         
         return isValid;
