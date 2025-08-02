@@ -116,26 +116,63 @@
     
     // Mostrar status atual das APIs na interface
     function updateAPIStatus() {
-        const statusElement = document.querySelector('.ai-status-indicator');
-        if (!statusElement) return;
+        const statusText = document.querySelector('.status-text p');
+        const statusBadge = document.querySelector('.status-badge');
+        
+        if (!statusText || !statusBadge) return;
         
         const hasValidKeys = checkAPIKeys();
         
         if (hasValidKeys) {
-            statusElement.innerHTML = `
-                <span style="color: #4CAF50;">🚀 IA Premium Ativada!</span>
-                <br><small style="color: #666;">APIs configuradas e funcionando</small>
-            `;
+            statusText.textContent = 'Sistema com APIs configuradas e funcionando - resultados premium!';
+            statusBadge.textContent = 'IA Premium Ativa';
+            statusBadge.className = 'status-badge connected';
         } else {
-            statusElement.innerHTML = `
-                <span style="color: #ff6b35;">🔬 Análise Local Ativa</span>
-                <br><small style="color: #666;">
-                    <a href="config-apis.html" style="color: #4CAF50; text-decoration: none;">
-                        Configure APIs para IA premium
-                    </a>
-                </small>
-            `;
+            statusText.innerHTML = 'Sistema usando análise local inteligente. <a href="config-apis.html" style="color: #4CAF50; text-decoration: none; font-weight: bold;">Configure APIs premium aqui</a>';
+            statusBadge.textContent = 'Config Needed';
+            statusBadge.className = 'status-badge warning';
+            statusBadge.style.background = 'linear-gradient(45deg, #ff6b35, #f7931e)';
         }
+        
+        // Adicionar botão de configuração se não existir
+        addConfigButton();
+    }
+    
+    // Adicionar botão de configuração
+    function addConfigButton() {
+        // Verificar se já existe
+        if (document.getElementById('config-apis-btn')) return;
+        
+        const statusCard = document.querySelector('.ai-status-card');
+        if (!statusCard) return;
+        
+        const configBtn = document.createElement('a');
+        configBtn.id = 'config-apis-btn';
+        configBtn.href = 'config-apis.html';
+        configBtn.innerHTML = '⚙️ Configurar APIs';
+        configBtn.style.cssText = `
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        `;
+        configBtn.addEventListener('mouseenter', () => {
+            configBtn.style.transform = 'translateY(-2px)';
+        });
+        configBtn.addEventListener('mouseleave', () => {
+            configBtn.style.transform = 'translateY(0)';
+        });
+        
+        // Tornar o status-card relativo para posicionamento
+        statusCard.style.position = 'relative';
+        statusCard.appendChild(configBtn);
     }
     
     // Executar quando a página carregar
