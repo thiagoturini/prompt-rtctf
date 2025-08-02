@@ -1,5 +1,6 @@
 # Arquivos de configuração local com chaves API
 config.local.js
+.api-keys-backup.tmp
 .env
 .env.local
 .env.production
