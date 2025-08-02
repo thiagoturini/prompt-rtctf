@@ -360,13 +360,19 @@ class RTCTFProcessor {
         this.debugKey('Gemini', this.geminiKey);
         this.debugKey('Groq', this.groqKey);
         
-        // Tentar com diferentes modelos em ordem de qualidade
+        // Tentar com diferentes modelos em ordem de POTÊNCIA (melhores primeiro)
         const models = [
-            { name: 'OpenAI GPT-3.5', method: () => this.tryOpenAI(text), className: 'openai', hasKey: availableKeys.openai },
-            { name: 'Anthropic Claude', method: () => this.tryAnthropic(text), className: 'claude', hasKey: availableKeys.anthropic },
-            { name: 'Google Gemini', method: () => this.tryGemini(text), className: 'gemini', hasKey: availableKeys.gemini },
-            { name: 'Groq Mixtral', method: () => this.tryGroq(text), className: 'groq', hasKey: availableKeys.groq }
+            { name: 'OpenAI GPT-3.5', method: () => this.tryOpenAI(text), className: 'openai', hasKey: availableKeys.openai, priority: 1 },
+            { name: 'Anthropic Claude', method: () => this.tryAnthropic(text), className: 'claude', hasKey: availableKeys.anthropic, priority: 2 },
+            { name: 'Google Gemini', method: () => this.tryGemini(text), className: 'gemini', hasKey: availableKeys.gemini, priority: 3 },
+            { name: 'Groq Mixtral', method: () => this.tryGroq(text), className: 'groq', hasKey: availableKeys.groq, priority: 4 }
         ];
+
+        console.log('🏆 Ordem de prioridade dos modelos (melhores primeiro):');
+        models.forEach(model => {
+            const status = model.hasKey ? '✅ DISPONÍVEL' : '❌ SEM CHAVE';
+            console.log(`  ${model.priority}. ${model.name}: ${status}`);
+        });
 
         for (const model of models) {
             if (!model.hasKey) {
@@ -412,6 +418,9 @@ class RTCTFProcessor {
     }
 
     async tryOpenAI(text) {
+        console.log('🤖 Tentando OpenAI GPT-3.5...');
+        console.log('🔑 Chave OpenAI:', this.openaiKey ? this.openaiKey.substring(0, 10) + '...' : 'não configurada');
+        
         const prompt = `Você é um especialista em engenharia de prompts e metodologia RTCTF. Transforme o texto do usuário em um prompt estruturado seguindo a metodologia Role, Task, Context, Tone, Format.
 
 METODOLOGIA RTCTF:
@@ -422,15 +431,6 @@ METODOLOGIA RTCTF:
 🧱 FORMAT: A estrutura da resposta - lista, tabela, parágrafos, e-mail, etc.
 
 TEXTO DO USUÁRIO: "${text}"
-
-EXEMPLO DE TRANSFORMAÇÃO:
-Entrada: "Quero entender a diferença entre romance e comédia"
-
-ROLE: Você é um crítico literário e cinematográfico com 15 anos de experiência em análise de gêneros narrativos
-TASK: Compare e explique detalhadamente as principais diferenças entre os gêneros romance e comédia
-CONTEXT: Esta análise será usada por estudantes de literatura que estão aprendendo sobre classificação de gêneros narrativos e precisam compreender as características distintivas
-TONE: Didático e acessível, como um professor explicando para alunos, mas mantendo profundidade analítica
-FORMAT: Organize em seções claras: características do romance, características da comédia, principais diferenças, e exemplos práticos de cada gênero
 
 INSTRUÇÕES:
 - ROLE: Defina um especialista específico e qualificado na área
@@ -448,30 +448,49 @@ Responda APENAS em JSON:
   "format": "[estrutura específica da resposta]"
 }`;
 
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.openaiKey}`
-            },
-            body: JSON.stringify({
-                model: 'gpt-3.5-turbo',
-                messages: [{ role: 'user', content: prompt }],
-                temperature: 0.1,
-                max_tokens: 1000
-            })
-        });
+        try {
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.openaiKey}`
+                },
+                body: JSON.stringify({
+                    model: 'gpt-3.5-turbo',
+                    messages: [{ role: 'user', content: prompt }],
+                    temperature: 0.1,
+                    max_tokens: 1000
+                })
+            });
 
-        if (!response.ok) {
-            throw new Error(`OpenAI API Error: ${response.status}`);
+            console.log('📡 Resposta OpenAI:', response.status, response.statusText);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('❌ Erro OpenAI:', errorText);
+                throw new Error(`OpenAI API Error: ${response.status} - ${errorText}`);
+            }
+
+            const data = await response.json();
+            console.log('✅ Dados recebidos do OpenAI:', data);
+            
+            const content = data.choices[0].message.content;
+            console.log('📝 Conteúdo OpenAI:', content);
+            
+            const result = this.extractJSON(content);
+            console.log('🎯 JSON extraído do OpenAI:', result);
+            
+            return result;
+        } catch (error) {
+            console.error('💥 Erro completo no OpenAI:', error);
+            throw error;
         }
-
-        const data = await response.json();
-        const content = data.choices[0].message.content;
-        return this.extractJSON(content);
     }
 
     async tryAnthropic(text) {
+        console.log('🤖 Tentando Anthropic Claude...');
+        console.log('🔑 Chave Anthropic:', this.anthropicKey ? this.anthropicKey.substring(0, 10) + '...' : 'não configurada');
+        
         const prompt = `Você é um expert em metodologia RTCTF para criar prompts estruturados.
 
 METODOLOGIA RTCTF:
@@ -482,15 +501,6 @@ METODOLOGIA RTCTF:
 🧱 FORMAT: Estruture a apresentação - lista, tabela, markdown, e-mail, etc.
 
 TEXTO PARA TRANSFORMAR: "${text}"
-
-EXEMPLO PRÁTICO:
-"Quero aprender sobre investimentos" →
-
-ROLE: Você é um consultor financeiro certificado com 10 anos de experiência em educação financeira
-TASK: Ensine os conceitos fundamentais de investimentos para iniciantes
-CONTEXT: Esta informação será usada por uma pessoa que nunca investiu e quer começar com segurança, sem conhecimento técnico prévio
-TONE: Didático e encorajador, como um mentor paciente, evitando jargões técnicos
-FORMAT: Organize em: conceitos básicos, tipos de investimento, primeiros passos práticos, e dicas de segurança
 
 INSTRUÇÕES:
 - ROLE: Seja específico sobre a expertise e experiência
@@ -508,31 +518,50 @@ JSON de resposta:
   "format": "[estrutura detalhada da resposta]"
 }`;
 
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-api-key': this.anthropicKey,
-                'anthropic-version': '2023-06-01'
-            },
-            body: JSON.stringify({
-                model: 'claude-3-haiku-20240307',
-                max_tokens: 1000,
-                temperature: 0.1,
-                messages: [{ role: 'user', content: prompt }]
-            })
-        });
+        try {
+            const response = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': this.anthropicKey,
+                    'anthropic-version': '2023-06-01'
+                },
+                body: JSON.stringify({
+                    model: 'claude-3-haiku-20240307',
+                    max_tokens: 1000,
+                    temperature: 0.1,
+                    messages: [{ role: 'user', content: prompt }]
+                })
+            });
 
-        if (!response.ok) {
-            throw new Error(`Anthropic API Error: ${response.status}`);
+            console.log('📡 Resposta Anthropic:', response.status, response.statusText);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('❌ Erro Anthropic:', errorText);
+                throw new Error(`Anthropic API Error: ${response.status} - ${errorText}`);
+            }
+
+            const data = await response.json();
+            console.log('✅ Dados recebidos do Anthropic:', data);
+            
+            const content = data.content[0].text;
+            console.log('📝 Conteúdo Anthropic:', content);
+            
+            const result = this.extractJSON(content);
+            console.log('🎯 JSON extraído do Anthropic:', result);
+            
+            return result;
+        } catch (error) {
+            console.error('💥 Erro completo no Anthropic:', error);
+            throw error;
         }
-
-        const data = await response.json();
-        const content = data.content[0].text;
-        return this.extractJSON(content);
     }
 
     async tryGemini(text) {
+        console.log('🤖 Tentando Google Gemini...');
+        console.log('🔑 Chave Gemini:', this.geminiKey ? this.geminiKey.substring(0, 10) + '...' : 'não configurada');
+        
         const prompt = `Você é um especialista em metodologia RTCTF. Transforme o texto em prompt estruturado seguindo esta metodologia:
 
 🎭 ROLE = "Chapéu profissional" que a IA deve assumir
@@ -543,15 +572,6 @@ JSON de resposta:
 
 ENTRADA: "${text}"
 
-REFERÊNCIA:
-"Preciso de ajuda com marketing digital" →
-
-ROLE: Você é um especialista em marketing digital com 8 anos de experiência em pequenas e médias empresas
-TASK: Desenvolva uma estratégia completa de marketing digital personalizada
-CONTEXT: Para um empreendedor que está iniciando seu negócio online e tem orçamento limitado, precisando de resultados práticos e mensuráveis
-TONE: Consultivo e prático, como um mentor experiente, focando em ações simples e eficazes
-FORMAT: Plano estruturado com: diagnóstico atual, estratégias recomendadas, cronograma de implementação, e métricas de acompanhamento
-
 RESPONDA SÓ JSON:
 {
   "role": "Você é um [especialista específico com experiência detalhada]",
@@ -561,22 +581,38 @@ RESPONDA SÓ JSON:
   "format": "[estrutura detalhada de como apresentar a resposta]"
 }`;
 
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${this.geminiKey}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: { temperature: 0.1, maxOutputTokens: 800 }
-            })
-        });
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${this.geminiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: { temperature: 0.1, maxOutputTokens: 800 }
+                })
+            });
 
-        if (!response.ok) {
-            throw new Error(`Gemini API Error: ${response.status}`);
+            console.log('📡 Resposta Gemini:', response.status, response.statusText);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('❌ Erro Gemini:', errorText);
+                throw new Error(`Gemini API Error: ${response.status} - ${errorText}`);
+            }
+
+            const data = await response.json();
+            console.log('✅ Dados recebidos do Gemini:', data);
+            
+            const content = data.candidates[0].content.parts[0].text;
+            console.log('📝 Conteúdo Gemini:', content);
+            
+            const result = this.extractJSON(content);
+            console.log('🎯 JSON extraído do Gemini:', result);
+            
+            return result;
+        } catch (error) {
+            console.error('💥 Erro completo no Gemini:', error);
+            throw error;
         }
-
-        const data = await response.json();
-        const content = data.candidates[0].content.parts[0].text;
-        return this.extractJSON(content);
     }
 
     async tryGroq(text) {

@@ -8,11 +8,12 @@
 
 window.API_KEYS = {
     // ⚠️ CHAVES DE DEMONSTRAÇÃO - NÃO FUNCIONAIS
-    // Para usar, o usuário deve configurar suas próprias chaves
-    openai: 'sk-proj-DEMO_KEY_SUBSTITUA_POR_SUA_CHAVE_REAL',
-    anthropic: 'sk-ant-api03-DEMO_KEY_SUBSTITUA_POR_SUA_CHAVE_REAL',
-    groq: 'gsk_DEMO_KEY_SUBSTITUA_POR_SUA_CHAVE_REAL',
-    gemini: 'AIzaSy_DEMO_KEY_SUBSTITUA_POR_SUA_CHAVE_REAL'
+    // Para usar o sistema, configure suas próprias chaves em:
+    // 👉 config-apis.html (página de configuração)
+    openai: 'sk-proj-DEMO_SUBSTITUA_POR_SUA_CHAVE',
+    anthropic: 'sk-ant-api03-DEMO_SUBSTITUA_POR_SUA_CHAVE', 
+    groq: 'gsk_DEMO_SUBSTITUA_POR_SUA_CHAVE',
+    gemini: 'AIzaSy_DEMO_SUBSTITUA_POR_SUA_CHAVE'
 };
 
 // Sistema de configuração segura

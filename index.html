@@ -9,45 +9,96 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1>RTCTF Prompt Estruturador</h1>
-            <p class="subtitle">Transforme seu texto em um prompt estruturado com Role, Task, Context, Tone e Format</p>
+            <h1>🚀 RTCTF Prompt Estruturador</h1>
+            <p class="subtitle">Transforme qualquer texto em prompts profissionais com IA avançada</p>
+            <div class="methodology-badges">
+                <span class="badge">Role</span>
+                <span class="badge">Task</span>
+                <span class="badge">Context</span>
+                <span class="badge">Tone</span>
+                <span class="badge">Format</span>
+            </div>
         </header>
 
         <main class="main-content">
-            <!-- Status da IA -->
-            <section class="ai-status-section">
-                <div class="ai-status-card">
-                    <div class="status-indicator">
-                        <span class="status-icon">🚀</span>
-                        <div class="status-text">
-                            <h3>IA Multi-Modelo Avançada</h3>
-                            <p>Sistema com OpenAI GPT-3.5, Claude, Groq Mixtral e Gemini para máxima precisão</p>
+            <!-- Seção de início rápido -->
+            <section class="quick-start-section">
+                <div class="quick-start-card">
+                    <div class="quick-start-header">
+                        <span class="quick-start-icon">⚡</span>
+                        <div class="quick-start-text">
+                            <h3>Início Rápido - 3 Passos Simples</h3>
+                            <p>Configure as APIs uma vez e transforme seus textos em prompts profissionais</p>
                         </div>
-                        <span class="status-badge connected">Premium Ready</span>
+                    </div>
+                    <div class="quick-steps">
+                        <div class="step">
+                            <span class="step-number">1</span>
+                            <div class="step-content">
+                                <h4>Configure as APIs</h4>
+                                <p>Acesse a <a href="config-apis.html" target="_blank" class="config-link">página de configuração</a> e adicione pelo menos uma API</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">2</span>
+                            <div class="step-content">
+                                <h4>Digite seu texto</h4>
+                                <p>Cole qualquer pedido ou ideia no campo abaixo</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">3</span>
+                            <div class="step-content">
+                                <h4>Gere e copie</h4>
+                                <p>Clique no botão e copie seu prompt estruturado</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Área de instruções -->
-            <section class="instructions">
-                <h2>Como usar:</h2>
-                <ol>
-                    <li>Digite ou cole seu texto no campo abaixo</li>
-                    <li>Clique em "Gerar Prompt RTCTF com IA"</li>
-                    <li>Revise e ajuste o resultado se necessário</li>
-                    <li>Copie o prompt estruturado</li>
-                </ol>
+            <!-- Status da IA -->
+            <section class="ai-status-section">
+                <div class="ai-status-card">
+                    <div class="status-indicator">
+                        <span class="status-icon">🤖</span>
+                        <div class="status-text">
+                            <h3>IA Multi-Modelo com Prioridade Inteligente</h3>
+                            <p>OpenAI GPT-3.5 (1º) → Claude (2º) → Gemini (3º) → Groq Mixtral (4º)</p>
+                        </div>
+                        <span class="status-badge connected">Sistema Premium</span>
+                    </div>
+                </div>
             </section>
 
             <!-- Área de entrada -->
             <section class="input-section">
-                <label for="inputText">Seu texto para estruturar:</label>
-                <textarea 
-                    id="inputText" 
-                    placeholder="Cole aqui o texto que você gostaria de transformar em um prompt estruturado RTCTF..."
-                    rows="6"
-                ></textarea>
-                <button id="generateBtn" class="btn-primary">🚀 Gerar Prompt RTCTF Inteligente</button>
+                <label for="inputText" class="input-label">
+                    <span class="label-icon">✨</span>
+                    <span class="label-text">Seu texto para transformar em prompt profissional:</span>
+                </label>
+                <div class="textarea-container">
+                    <textarea 
+                        id="inputText" 
+                        placeholder="💡 Exemplos:
+• 'Quero aprender Python'
+• 'Preciso de ajuda com marketing digital'
+• 'Como melhorar minha apresentação'
+• 'Estratégias para vendas online'
+
+Digite qualquer pergunta ou pedido aqui..."
+                        rows="8"
+                    ></textarea>
+                    <div class="input-hint">
+                        <span class="hint-icon">💡</span>
+                        <span class="hint-text">Dica: Seja específico no seu pedido para melhores resultados</span>
+                    </div>
+                </div>
+                <button id="generateBtn" class="btn-primary">
+                    <span class="btn-icon">🚀</span>
+                    <span class="btn-text">Gerar Prompt RTCTF com IA</span>
+                    <span class="btn-subtitle">Ctrl+Enter</span>
+                </button>
             </section>
 
             <!-- Área de resultado -->
